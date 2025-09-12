@@ -1,50 +1,78 @@
-// components/register/Stepper.tsx
+// src/components/register/Stepper.tsx
+"use client";
 import * as React from "react";
 
-type StepperProps = {
-  /** 1-based index of the current step */
+type Props = {
   current: number;
-  /** total number of steps (>=1) */
   total: number;
-  /** Optional labels shown under each dot (use length === total for best look) */
   labels?: string[];
+  captions?: string[];
   className?: string;
 };
 
-export function Stepper({ current, total, labels = [], className }: StepperProps) {
+export function Stepper({ current, total, labels = [], captions = [], className }: Props) {
+  if (total <= 1) return null;
+  
   const t = Math.max(1, total);
   const c = Math.min(Math.max(1, current), t);
-  const pct = t === 1 ? 0 : ((c - 1) / (t - 1)) * 100;
+
+  // center of current step
+  const centerPct = ((c - 0.5) / t) * 100;
 
   return (
     <div className={["w-full", className].filter(Boolean).join(" ")}>
-      {/* progress line */}
-      <div className="relative h-px w-full rounded bg-muted">
+      {/* Track */}
+      <div className="relative h-[2px] w-full rounded bg-muted">
+        {/* Blue up to current dot center */}
         <div
-          className="absolute left-0 top-0 h-px rounded bg-[#206cec] transition-all"
-          style={{ width: `${pct}%` }}
+          className="absolute left-0 top-0 h-[2px] rounded bg-[#206cec] transition-all"
+          style={{ width: `${centerPct}%` }}
         />
-      </div>
 
-      {/* dots + labels */}
-      <div className="mt-4 flex items-start justify-between">
+        {/* Dots at the center of each column */}
         {Array.from({ length: t }).map((_, i) => {
           const step = i + 1;
-          const active = step <= c;
+          const state = step < c ? "done" : step === c ? "current" : "todo";
+          const leftPct = ((i + 0.5) / t) * 100;
+
+          const base = "block h-5 w-5 rounded-full border-2"; // <-- block fixes the circle
+          const cls =
+            state === "done"
+              ? `${base} bg-[#206cec] border-[#206cec]`
+              : state === "current"
+              ? `${base} bg-white border-[#206cec] ring-4 ring-[#206cec]/20`
+              : `${base} bg-white border-muted`;
+
           return (
-            <div key={step} className="flex min-w-0 flex-col items-center text-center">
-              <div
-                className={[
-                  "flex h-6 w-6 items-center justify-center rounded-full border text-xs",
-                  active ? "bg-[#206cec] text-white border-[#206cec]" : "bg-white text-muted-foreground border-muted",
-                ].join(" ")}
-                aria-current={active ? "step" : undefined}
-                aria-label={`Step ${step}${labels[i] ? `: ${labels[i]}` : ""}`}
-              >
-                {step}
+            <span
+              key={i}
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 pointer-events-none"
+              style={{ left: `${leftPct}%` }}
+              aria-current={state === "current" ? "step" : undefined}
+            >
+              <span className={cls} />
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Labels + captions */}
+      <div
+        className="mt-3 grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${t}, minmax(0, 1fr))` }}
+      >
+        {Array.from({ length: t }).map((_, i) => {
+          const step = i + 1;
+          const active = step === c;
+          return (
+            <div key={i} className="text-center">
+              <div className={active ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
+                {labels[i] ?? `Step ${step}`}
               </div>
-              {labels[i] && (
-                <div className="mt-2 text-xs font-medium truncate max-w-[10rem]">{labels[i]}</div>
+              {captions[i] && (
+                <div className="text-xs text-muted-foreground">
+                  {captions[i]}
+                </div>
               )}
             </div>
           );
