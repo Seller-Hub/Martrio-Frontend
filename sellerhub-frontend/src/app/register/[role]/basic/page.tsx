@@ -91,8 +91,17 @@ export default function BasicInfoPage() {
             Enter your details to get started.
         </p>
 
-        {/* Stepper below */}
-        <Stepper current={1} total={total} labels={["Basic Information", "Business Information"]} />
+            <Stepper
+            current={1}
+            total={role === "customer" ? 1 : 2}
+            labels={["Basic Information", "Business Information"]}
+            captions={[
+                "Let’s start with your personal details.",
+                "Tell us about your business and finish up.",
+            ]}
+            className="mt-4"
+            />
+
         </CardHeader>
 
 
@@ -111,35 +120,50 @@ export default function BasicInfoPage() {
             />
         </div>
 
+        
         {/* Region */}
         <div>
-            <Label htmlFor="region" className="sr-only">Your Region</Label>
-            <Select value={region} onValueChange={setRegion}>
-            <SelectTrigger id="region">
-                <SelectValue placeholder="Your Region" />
+        <Label htmlFor="region" className="sr-only">Your Region</Label>
+        <Select value={region} onValueChange={setRegion}>
+            <SelectTrigger
+            id="region"
+            className="
+                w-full h-10 rounded-md px-3 text-sm
+                bg-background border border-input
+                [&_[data-placeholder]]:text-muted-foreground/60   /* <-- placeholder same gray as inputs */
+                [&>svg]:text-muted-foreground/60                  /* caret icon tone matches placeholders */
+                focus:ring-2 focus:ring-ring focus:ring-offset-0
+            "
+            >
+            <SelectValue placeholder="Your Region" />
             </SelectTrigger>
-            <SelectContent className="max-h-72">
-                <SelectGroup>
+
+
+            {/* Keep dropdown as wide as the trigger + limit height */}
+            <SelectContent className="w-[--radix-select-trigger-width] max-h-72">
+            <SelectGroup>
                 <SelectLabel>Popular</SelectLabel>
                 {POPULAR.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
+                <SelectItem key={p.value} value={p.value}>
                     {p.label}
-                    </SelectItem>
+                </SelectItem>
                 ))}
-                </SelectGroup>
-                <SelectGroup>
+            </SelectGroup>
+            <SelectGroup>
                 <SelectLabel>All countries</SelectLabel>
                 {COUNTRY_OPTIONS.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
+                <SelectItem key={opt.value} value={opt.value}>
                     {opt.label}
-                    </SelectItem>
+                </SelectItem>
                 ))}
-                </SelectGroup>
+            </SelectGroup>
             </SelectContent>
-            </Select>
-            {/* ensure region posts with the form */}
-            <input type="hidden" name="region" value={region} />
+        </Select>
+
+        {/* ensure region posts with the form */}
+        <input type="hidden" name="region" value={region} />
         </div>
+
 
         {/* Password with show/hide */}
         <div>
