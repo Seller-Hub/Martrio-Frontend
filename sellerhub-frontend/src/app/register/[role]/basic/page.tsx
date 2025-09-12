@@ -1,3 +1,4 @@
+// app/(auth)/register/[role]/basic/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import {
   SelectGroup, SelectLabel,
 } from "@/components/ui/select";
 import { Stepper } from "@/components/register/Stepper";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import countriesData from "world-countries";
 
 type Role = "seller" | "admin" | "customer";
@@ -35,8 +36,9 @@ export default function BasicInfoPage() {
   const role = params.role;
 
   const [region, setRegion] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  // guard route
   useEffect(() => {
     if (!["seller", "admin", "customer"].includes(role)) router.replace("/register");
   }, [role, router]);
@@ -61,7 +63,6 @@ export default function BasicInfoPage() {
   return (
     <Card className="h-full rounded-2xl border shadow-sm flex flex-col">
       <CardHeader className="pb-2">
-        {/* Back button */}
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -72,7 +73,6 @@ export default function BasicInfoPage() {
             <ArrowLeft className="h-4 w-4" />
           </button>
           <div />
-          {/* (optional) close X could go here */}
         </div>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Create an Account</h1>
@@ -80,14 +80,22 @@ export default function BasicInfoPage() {
         <Stepper current={1} total={total} labels={["Basic Information", "Business Information"]} />
       </CardHeader>
 
-      {/* Make content scroll if it ever overflows, but keep the outer size fixed */}
       <CardContent className="pt-0 flex-1 overflow-auto">
         <form action={onSubmit} className="grid gap-4">
+          {/* Email */}
           <div className="grid gap-2">
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" name="email" type="email" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="Email Address"
+              className="placeholder:text-muted-foreground/60"
+            />
           </div>
 
+          {/* Region */}
           <div className="grid gap-2">
             <Label htmlFor="region">Your Region</Label>
             <Select value={region} onValueChange={setRegion}>
@@ -113,17 +121,56 @@ export default function BasicInfoPage() {
                 </SelectGroup>
               </SelectContent>
             </Select>
+            {/* ensure it's posted */}
             <input type="hidden" name="region" value={region} />
           </div>
 
+          {/* Password with eye */}
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" minLength={6} required />
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPwd ? "text" : "password"}
+                minLength={6}
+                required
+                placeholder="Password"
+                className="pr-10 placeholder:text-muted-foreground/60"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd((v) => !v)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                aria-label={showPwd ? "Hide password" : "Show password"}
+              >
+                {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
+          {/* Confirm password with eye */}
           <div className="grid gap-2">
             <Label htmlFor="confirm">Confirm Password</Label>
-            <Input id="confirm" name="confirm" type="password" minLength={6} required />
+            <div className="relative">
+              <Input
+                id="confirm"
+                name="confirm"
+                type={showConfirm ? "text" : "password"}
+                minLength={6}
+                required
+                placeholder="Confirm Password"
+                className="pr-10 placeholder:text-muted-foreground/60"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm((v) => !v)}
+                className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                aria-label={showConfirm ? "Hide password" : "Show password"}
+              >
+                {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
 
           <input type="hidden" name="role" value={role} />
