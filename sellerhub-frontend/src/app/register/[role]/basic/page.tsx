@@ -12,7 +12,7 @@ import {
   SelectGroup, SelectLabel,
 } from "@/components/ui/select";
 import { Stepper } from "@/components/register/Stepper";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, X } from "lucide-react";
 import countriesData from "world-countries";
 
 type Role = "seller" | "admin" | "customer";
@@ -62,74 +62,90 @@ export default function BasicInfoPage() {
 
   return (
     <Card className="h-full rounded-2xl border shadow-sm flex flex-col">
-      <CardHeader className="pb-2">
+        <CardHeader className="pb-2">
+        {/* Row: back icon + title (aligned) + optional close on the right */}
         <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => router.push("/register")}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-          <div />
+            <div className="flex items-center gap-3">
+            <button
+                type="button"
+                onClick={() => router.push("/register")}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
+                aria-label="Back"
+            >
+                <ArrowLeft className="h-4 w-4" />
+            </button>
+
+            <h1 className="text-3xl font-semibold tracking-tight leading-none">
+                Create an Account
+            </h1>
+            </div>
+
+            {/*  close button on the far right */}
+            { <button className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted" aria-label="Close">
+            <X className="h-4 w-4" />
+            </button>}
         </div>
 
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Create an Account</h1>
-        <p className="text-sm text-muted-foreground">Enter your details to get started.</p>
+        {/* Subtitle directly under the row */}
+        <p className="mt-1 text-sm text-muted-foreground">
+            Enter your details to get started.
+        </p>
+
+        {/* Stepper below */}
         <Stepper current={1} total={total} labels={["Basic Information", "Business Information"]} />
-      </CardHeader>
+        </CardHeader>
+
 
       <CardContent className="pt-0 flex-1 overflow-auto">
         <form action={onSubmit} className="grid gap-4">
-          {/* Email */}
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email Address</Label>
+        {/* Email (label is screen-reader only) */}
+        <div>
+            <Label htmlFor="email" className="sr-only">Email Address</Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="Email Address"
-              className="placeholder:text-muted-foreground/60"
+            id="email"
+            name="email"
+            type="email"
+            required
+            placeholder="Email Address"
+            className="placeholder:text-muted-foreground/60"
             />
-          </div>
+        </div>
 
-          {/* Region */}
-          <div className="grid gap-2">
-            <Label htmlFor="region">Your Region</Label>
+        {/* Region */}
+        <div>
+            <Label htmlFor="region" className="sr-only">Your Region</Label>
             <Select value={region} onValueChange={setRegion}>
-              <SelectTrigger id="region">
-                <SelectValue placeholder="Select a region" />
-              </SelectTrigger>
-              <SelectContent className="max-h-72">
+            <SelectTrigger id="region">
+                <SelectValue placeholder="Your Region" />
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
                 <SelectGroup>
-                  <SelectLabel>Popular</SelectLabel>
-                  {POPULAR.map((p) => (
+                <SelectLabel>Popular</SelectLabel>
+                {POPULAR.map((p) => (
                     <SelectItem key={p.value} value={p.value}>
-                      {p.label}
+                    {p.label}
                     </SelectItem>
-                  ))}
+                ))}
                 </SelectGroup>
                 <SelectGroup>
-                  <SelectLabel>All countries</SelectLabel>
-                  {COUNTRY_OPTIONS.map((opt) => (
+                <SelectLabel>All countries</SelectLabel>
+                {COUNTRY_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
+                    {opt.label}
                     </SelectItem>
-                  ))}
+                ))}
                 </SelectGroup>
-              </SelectContent>
+            </SelectContent>
             </Select>
-            {/* ensure it's posted */}
+            {/* ensure region posts with the form */}
             <input type="hidden" name="region" value={region} />
-          </div>
+        </div>
 
-          {/* Password with eye */}
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+        {/* Password with show/hide */}
+        <div>
+            <Label htmlFor="password" className="sr-only">Password</Label>
             <div className="relative">
-              <Input
+            <Input
                 id="password"
                 name="password"
                 type={showPwd ? "text" : "password"}
@@ -137,23 +153,23 @@ export default function BasicInfoPage() {
                 required
                 placeholder="Password"
                 className="pr-10 placeholder:text-muted-foreground/60"
-              />
-              <button
+            />
+            <button
                 type="button"
                 onClick={() => setShowPwd((v) => !v)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 aria-label={showPwd ? "Hide password" : "Show password"}
-              >
+            >
                 {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+            </button>
             </div>
-          </div>
+        </div>
 
-          {/* Confirm password with eye */}
-          <div className="grid gap-2">
-            <Label htmlFor="confirm">Confirm Password</Label>
+        {/* Confirm password with show/hide */}
+        <div>
+            <Label htmlFor="confirm" className="sr-only">Confirm Password</Label>
             <div className="relative">
-              <Input
+            <Input
                 id="confirm"
                 name="confirm"
                 type={showConfirm ? "text" : "password"}
@@ -161,23 +177,23 @@ export default function BasicInfoPage() {
                 required
                 placeholder="Confirm Password"
                 className="pr-10 placeholder:text-muted-foreground/60"
-              />
-              <button
+            />
+            <button
                 type="button"
                 onClick={() => setShowConfirm((v) => !v)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 aria-label={showConfirm ? "Hide password" : "Show password"}
-              >
+            >
                 {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
+            </button>
             </div>
-          </div>
+        </div>
 
-          <input type="hidden" name="role" value={role} />
+        <input type="hidden" name="role" value={role} />
 
-          <Button type="submit" className="mt-2 w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white">
+        <Button type="submit" className="mt-2 w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white">
             Continue
-          </Button>
+        </Button>
         </form>
       </CardContent>
 
