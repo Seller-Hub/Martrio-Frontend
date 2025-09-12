@@ -33,25 +33,34 @@ export default function RegisterRolePage() {
         <div className="grid gap-3">
           {options.map(({ key, title, desc, Icon }) => {
             const selected = role === key;
+
+            const tileClass = [
+              "group w-full rounded-2xl border text-center px-5 py-5 shadow-sm",
+              "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#206cec]/40",
+              selected
+                ? "bg-blue-50 border-[#206cec]"               // SELECTED
+                : "bg-white border-gray-200 hover:border-[#206cec]" // HOVER = border only
+            ].join(" ");
+
+            const iconWrapClass = [
+              "flex items-center justify-center rounded-xl h-12 w-12",
+              selected ? "bg-blue-100" : "bg-blue-50"          // no change on hover
+            ].join(" ");
+
             return (
               <button
                 key={key}
                 type="button"
                 onClick={() => setRole(key)}
                 aria-pressed={selected}
-                className={[
-                  "group w-full rounded-2xl border transition-colors shadow-sm text-center px-5 py-5",
-                  selected
-                    ? "bg-blue-50 border-[#206cec]"
-                    : "bg-white border-gray-200 hover:border-[#206cec] hover:bg-blue-50/60",
-                ].join(" ")}
+                aria-selected={selected}
+                className={tileClass}
               >
-                <div className="flex flex-col items-center gap-1">
-                  <span className={["flex h-12 w-12 items-center justify-center rounded-xl",
-                    selected ? "bg-white/40" : "bg-blue-50"].join(" ")}>
-                    <Icon className="h-7 w-7 text-[#206cec]" />
+                <div className="flex flex-col items-center gap-2">
+                  <span className={iconWrapClass}>
+                    <Icon className="h-5 w-5 text-[#206cec]" />
                   </span>
-                  <div className="text-lg font-semibold">{title}</div>
+                  <div className="text-base font-semibold">{title}</div>
                   <div className="text-xs text-muted-foreground">{desc}</div>
                 </div>
               </button>
