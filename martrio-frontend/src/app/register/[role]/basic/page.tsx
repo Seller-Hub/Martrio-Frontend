@@ -1,7 +1,6 @@
-// app/(auth)/register/[role]/basic/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -29,7 +28,7 @@ const POPULAR = [
   { value: "tr", label: "Türkiye" },
 ];
 
-export default function BasicInfoPage() {
+function BasicInfoInner() {
   const router = useRouter();
   const params = useParams<{ role: Role }>();
   const next = useSearchParams().get("next") ?? "/dashboard";
@@ -58,118 +57,112 @@ export default function BasicInfoPage() {
     }
   }
 
-  const total = role === "customer" ? 1 : 2;
-
   return (
     <Card className="h-full rounded-2xl border shadow-sm flex flex-col">
-        <CardHeader className="pb-2">
-        {/* Row: back icon + title (aligned) + optional close on the right */}
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <button
-                type="button"
-                onClick={() => router.push("/register")}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
-                aria-label="Back"
+              type="button"
+              onClick={() => router.push("/register")}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
+              aria-label="Back"
             >
-                <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-4 w-4" />
             </button>
 
             <h1 className="text-3xl font-semibold tracking-tight leading-none">
-                Create an Account
+              Create an Account
             </h1>
-            </div>
+          </div>
 
-            {/*  close button on the far right */}
-            { <button className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted" aria-label="Close">
+          <button
+            type="button"
+            onClick={() => router.push("/register")}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-muted"
+            aria-label="Close"
+          >
             <X className="h-4 w-4" />
-            </button>}
+          </button>
         </div>
 
-        {/* Subtitle directly under the row */}
         <p className="mt-1 text-sm text-muted-foreground">
-            Enter your details to get started.
+          Enter your details to get started.
         </p>
 
-            <Stepper
-            current={1}
-            total={role === "customer" ? 1 : 2}
-            labels={["Basic Information", "Business Information"]}
-            captions={[
-                "Let’s start with your personal details.",
-                "Tell us about your business and finish up.",
-            ]}
-            className="mt-4"
-            />
-
-        </CardHeader>
-
+        <Stepper
+          current={1}
+          total={role === "customer" ? 1 : 2}
+          labels={["Basic Information", "Business Information"]}
+          captions={[
+            "Let’s start with your personal details.",
+            "Tell us about your business and finish up.",
+          ]}
+          className="mt-4"
+        />
+      </CardHeader>
 
       <CardContent className="pt-0 flex-1 overflow-auto">
         <form action={onSubmit} className="grid gap-4">
-        {/* Email (label is screen-reader only) */}
-        <div>
+          {/* Email */}
+          <div>
             <Label htmlFor="email" className="sr-only">Email Address</Label>
             <Input
-            id="email"
-            name="email"
-            type="email"
-            required
-            placeholder="Email Address"
-            className="placeholder:text-muted-foreground/60"
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="Email Address"
+              className="placeholder:text-muted-foreground/60"
             />
-        </div>
+          </div>
 
-        
-        {/* Region */}
-        <div>
-        <Label htmlFor="region" className="sr-only">Your Region</Label>
-        <Select value={region} onValueChange={setRegion}>
-            <SelectTrigger
-            id="region"
-            className="
-                w-full h-10 rounded-md px-3 text-sm
-                bg-background border border-input
-                [&_[data-placeholder]]:text-muted-foreground/60   /* <-- placeholder same gray as inputs */
-                [&>svg]:text-muted-foreground/60                  /* caret icon tone matches placeholders */
-                focus:ring-2 focus:ring-ring focus:ring-offset-0
-            "
-            >
-            <SelectValue placeholder="Your Region" />
-            </SelectTrigger>
+          {/* Region */}
+          <div>
+            <Label htmlFor="region" className="sr-only">Your Region</Label>
+            <Select value={region} onValueChange={setRegion}>
+              <SelectTrigger
+                id="region"
+                className="
+                  w-full h-10 rounded-md px-3 text-sm
+                  bg-background border border-input
+                  [&_[data-placeholder]]:text-muted-foreground/60
+                  [&>svg]:text-muted-foreground/60
+                  focus:ring-2 focus:ring-ring focus:ring-offset-0
+                "
+              >
+                <SelectValue placeholder="Your Region" />
+              </SelectTrigger>
 
+              <SelectContent className="w-[--radix-select-trigger-width] max-h-72">
+                <SelectGroup>
+                  <SelectLabel>Popular</SelectLabel>
+                  {POPULAR.map((p) => (
+                    <SelectItem key={p.value} value={p.value}>
+                      {p.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel>All countries</SelectLabel>
+                  {COUNTRY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-            {/* Keep dropdown as wide as the trigger + limit height */}
-            <SelectContent className="w-[--radix-select-trigger-width] max-h-72">
-            <SelectGroup>
-                <SelectLabel>Popular</SelectLabel>
-                {POPULAR.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
-                    {p.label}
-                </SelectItem>
-                ))}
-            </SelectGroup>
-            <SelectGroup>
-                <SelectLabel>All countries</SelectLabel>
-                {COUNTRY_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                </SelectItem>
-                ))}
-            </SelectGroup>
-            </SelectContent>
-        </Select>
+            {/* ensure region posts with the form */}
+            <input type="hidden" name="region" value={region} />
+          </div>
 
-        {/* ensure region posts with the form */}
-        <input type="hidden" name="region" value={region} />
-        </div>
-
-
-        {/* Password with show/hide */}
-        <div>
+          {/* Password with show/hide */}
+          <div>
             <Label htmlFor="password" className="sr-only">Password</Label>
             <div className="relative">
-            <Input
+              <Input
                 id="password"
                 name="password"
                 type={showPwd ? "text" : "password"}
@@ -177,23 +170,23 @@ export default function BasicInfoPage() {
                 required
                 placeholder="Password"
                 className="pr-10 placeholder:text-muted-foreground/60"
-            />
-            <button
+              />
+              <button
                 type="button"
                 onClick={() => setShowPwd((v) => !v)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 aria-label={showPwd ? "Hide password" : "Show password"}
-            >
+              >
                 {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
+              </button>
             </div>
-        </div>
+          </div>
 
-        {/* Confirm password with show/hide */}
-        <div>
+          {/* Confirm password with show/hide */}
+          <div>
             <Label htmlFor="confirm" className="sr-only">Confirm Password</Label>
             <div className="relative">
-            <Input
+              <Input
                 id="confirm"
                 name="confirm"
                 type={showConfirm ? "text" : "password"}
@@ -201,27 +194,35 @@ export default function BasicInfoPage() {
                 required
                 placeholder="Confirm Password"
                 className="pr-10 placeholder:text-muted-foreground/60"
-            />
-            <button
+              />
+              <button
                 type="button"
                 onClick={() => setShowConfirm((v) => !v)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 aria-label={showConfirm ? "Hide password" : "Show password"}
-            >
+              >
                 {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
+              </button>
             </div>
-        </div>
+          </div>
 
-        <input type="hidden" name="role" value={role} />
+          <input type="hidden" name="role" value={role} />
 
-        <Button type="submit" className="mt-2 w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white">
+          <Button type="submit" className="mt-2 w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white">
             Continue
-        </Button>
+          </Button>
         </form>
       </CardContent>
 
       <CardFooter />
     </Card>
+  );
+}
+
+export default function BasicInfoPage() {
+  return (
+    <Suspense fallback={null}>
+      <BasicInfoInner />
+    </Suspense>
   );
 }

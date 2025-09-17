@@ -1,6 +1,6 @@
-# SellerHub
+# Martrio
 
-# SellerHub Frontend – Tech Stack & High‑Level Architecture
+# Martrio Frontend – Tech Stack & High‑Level Architecture
 
 A short reference for **what we’re using on the client side and how the pieces fit together**. Ideal for new contributors or for system‑design overviews.
 
