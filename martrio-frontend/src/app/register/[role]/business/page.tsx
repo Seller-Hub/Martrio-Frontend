@@ -1,7 +1,7 @@
 // app/(auth)/register/[role]/business/page.tsx
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -13,8 +13,10 @@ import { Stepper } from "@/components/register/Stepper";
 import { ArrowLeft, X } from "lucide-react";
 
 type Role = "seller" | "admin" | "customer";
+type BasicInfo = Record<string, string>;
+type RegisterPayload = { role: Role } & BasicInfo & Record<string, string>;
 
-export default function BusinessInfoPage() {
+function BusinessInfoInner() {
   const params = useParams<{ role: Role }>();
   const router = useRouter();
   const next = useSearchParams().get("next") ?? "/dashboard";
@@ -25,14 +27,18 @@ export default function BusinessInfoPage() {
   }, [role, router]);
 
   async function onSubmit(formData: FormData) {
-    let basic: any = {};
+    let basic: BasicInfo = {};
     if (typeof window !== "undefined") {
-      try { basic = JSON.parse(sessionStorage.getItem("register:basic") || "{}"); } catch {}
+      try {
+        basic = JSON.parse(sessionStorage.getItem("register:basic") || "{}") as BasicInfo;
+      } catch {}
     }
-    const business = Object.fromEntries(formData.entries());
-    const payload = { role, ...basic, ...business };
 
-    // TODO: send to backend
+    const business = Object.fromEntries(
+      Array.from(formData.entries()).map(([k, v]) => [k, String(v)])
+    ) as Record<string, string>;
+
+    const payload: RegisterPayload = { role, ...basic, ...business };
     // await fetch("/api/register", { method: "POST", body: JSON.stringify(payload) });
 
     if (typeof window !== "undefined") sessionStorage.removeItem("register:basic");
@@ -92,24 +98,24 @@ export default function BusinessInfoPage() {
             />
           </div>
 
-            {/* Product category */}
-            <div className="grid gap-2">
+          {/* Product category */}
+          <div className="grid gap-2">
             <Label htmlFor="category" className="sr-only">Product category</Label>
             <Select name="category" required>
-                <SelectTrigger
+              <SelectTrigger
                 id="category"
                 className="w-full h-10 rounded-md px-4 [&>span[data-placeholder]]:text-muted-foreground/60"
-                >
+              >
                 <SelectValue placeholder="Product category" />
-                </SelectTrigger>
-                <SelectContent className="w-[--radix-select-trigger-width]">
+              </SelectTrigger>
+              <SelectContent className="w-[--radix-select-trigger-width]">
                 <SelectItem value="fashion">Fashion</SelectItem>
                 <SelectItem value="electronics">Electronics</SelectItem>
-                <SelectItem value="home">Home & Living</SelectItem>
+                <SelectItem value="home">Home &amp; Living</SelectItem>
                 <SelectItem value="beauty">Beauty</SelectItem>
-                </SelectContent>
+              </SelectContent>
             </Select>
-            </div>
+          </div>
 
           {/* Website URL */}
           <div className="grid gap-2">
@@ -153,5 +159,13 @@ export default function BusinessInfoPage() {
 
       <CardFooter />
     </Card>
+  );
+}
+
+export default function BusinessInfoPage() {
+  return (
+    <Suspense fallback={null}>
+      <BusinessInfoInner />
+    </Suspense>
   );
 }

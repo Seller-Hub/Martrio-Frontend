@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Store, ShoppingCart, UserRound } from "lucide-react";
 
 type Role = "seller" | "customer" | "admin";
 
-export default function RegisterRolePage() {
+function RegisterRoleInner() {
   const [role, setRole] = useState<Role>("seller");
   const router = useRouter();
   const next = useSearchParams().get("next") ?? "/";
@@ -22,13 +22,11 @@ export default function RegisterRolePage() {
 
   return (
     <Card className="h-full rounded-2xl border shadow-sm flex flex-col overflow-hidden">
-      {/* header stays fixed height */}
       <CardHeader className="pb-2 shrink-0">
         <h1 className="text-3xl font-semibold tracking-tight">Create an Account</h1>
         <p className="text-sm text-muted-foreground">Choose Your Account Type</p>
       </CardHeader>
 
-      {/* only this section scrolls if content is tall */}
       <CardContent className="pt-0 flex-1 overflow-visible lg:overflow-auto lg:min-h-0">
         <div className="grid gap-3">
           {options.map(({ key, title, desc, Icon }) => {
@@ -38,13 +36,13 @@ export default function RegisterRolePage() {
               "group w-full rounded-2xl border text-center px-5 py-5 shadow-sm",
               "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#206cec]/40",
               selected
-                ? "bg-blue-50 border-[#206cec]"               // SELECTED
-                : "bg-white border-gray-200 hover:border-[#206cec]" // HOVER = border only
+                ? "bg-blue-50 border-[#206cec]"
+                : "bg-white border-gray-200 hover:border-[#206cec]"
             ].join(" ");
 
             const iconWrapClass = [
               "flex items-center justify-center rounded-xl h-12 w-12",
-              selected ? "bg-blue-100" : "bg-blue-50"          // no change on hover
+              selected ? "bg-blue-100" : "bg-blue-50"
             ].join(" ");
 
             return (
@@ -53,7 +51,6 @@ export default function RegisterRolePage() {
                 type="button"
                 onClick={() => setRole(key)}
                 aria-pressed={selected}
-                aria-selected={selected}
                 className={tileClass}
               >
                 <div className="flex flex-col items-center gap-2">
@@ -69,7 +66,6 @@ export default function RegisterRolePage() {
         </div>
       </CardContent>
 
-      {/* footer stays pinned; no overflow */}
       <CardFooter className="mt-auto flex flex-col gap-2 pt-4">
         <Button
           className="w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white"
@@ -85,5 +81,13 @@ export default function RegisterRolePage() {
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+export default function RegisterRolePage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterRoleInner />
+    </Suspense>
   );
 }
