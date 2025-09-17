@@ -28,7 +28,9 @@ export default function LoginPage() {
         <Card className="w-full lg:w-[520px] rounded-2xl border shadow-sm flex flex-col min-h-[680px]">
           <CardHeader className="pb-2">
             <h1 className="text-3xl font-semibold tracking-tight">Login to your account</h1>
-            <p className="text-sm text-muted-foreground">Welcome back! Let's get you signed in.</p>
+            <p className="text-sm text-muted-foreground">
+            {"Welcome back! Let's get you signed in."}
+            </p>
           </CardHeader>
 
           <CardContent className="pt-0 flex-1">
