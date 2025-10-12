@@ -27,23 +27,26 @@ function RegisterRoleInner() {
         <p className="text-sm text-muted-foreground">Choose Your Account Type</p>
       </CardHeader>
 
-      <CardContent className="pt-0 flex-1 overflow-visible lg:overflow-auto lg:min-h-0">
-        <div className="grid gap-3">
+      <CardContent className="pt-0 flex-1 overflow-visible min-h-0">
+        <div className="grid grid-rows-3 gap-3 h-full">
           {options.map(({ key, title, desc, Icon }) => {
             const selected = role === key;
 
             const tileClass = [
-              "group w-full rounded-2xl border text-center px-5 py-5 shadow-sm",
+              "group w-full h-full rounded-2xl border text-center px-5 py-5 shadow-sm",
+              "[@media(max-height:1080px)]:py-3",
               "transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#206cec]/40",
               selected
                 ? "bg-blue-50 border-[#206cec]"
                 : "bg-white border-gray-200 hover:border-[#206cec]"
             ].join(" ");
 
-            const iconWrapClass = [
-              "flex items-center justify-center rounded-xl h-12 w-12",
-              selected ? "bg-blue-100" : "bg-blue-50"
-            ].join(" ");
+           const iconWrapClass = [
+             "inline-flex items-center justify-center h-11 w-11 rounded-xl leading-none shrink-0 select-none",
+             "[@media(max-height:1080px)]:h-10 [@media(max-height:1080px)]:w-10",
+             "ring-1 ring-[#206cec]/20",
+             selected ? "ring-[#206cec]/40 bg-[#206cec]/5" : "bg-transparent"
+           ].join(" ");
 
             return (
               <button
@@ -53,12 +56,12 @@ function RegisterRoleInner() {
                 aria-pressed={selected}
                 className={tileClass}
               >
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex h-full flex-col items-center justify-center gap-2">
                   <span className={iconWrapClass}>
-                    <Icon className="h-5 w-5 text-[#206cec]" />
+                  <Icon className="h-6 w-6 shrink-0 leading-none text-[#206cec]" strokeWidth={2} aria-hidden="true" />
                   </span>
                   <div className="text-base font-semibold">{title}</div>
-                  <div className="text-xs text-muted-foreground">{desc}</div>
+                  <div className="text-xs text-muted-foreground leading-snug">{desc}</div>
                 </div>
               </button>
             );
@@ -66,7 +69,7 @@ function RegisterRoleInner() {
         </div>
       </CardContent>
 
-      <CardFooter className="mt-auto flex flex-col gap-2 pt-4">
+      <CardFooter className="flex flex-col gap-2 pt-4">
         <Button
           className="w-full bg-[#206cec] hover:bg-[#206cec]/90 text-white"
           onClick={() => router.push(`/register/${role}/basic?next=${encodeURIComponent(next)}`)}
