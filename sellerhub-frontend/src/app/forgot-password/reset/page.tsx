@@ -53,11 +53,11 @@ export default function ForgotPasswordResetPage() {
             <form className="grid gap-4" onSubmit={onSubmit}>
               <div className="grid gap-2">
                 <Label htmlFor="password">New password</Label>
-                <Input id="password" name="password" type="password" autoComplete="new-password" required />
+                <Input id="password" name="password" type="password" required placeholder="Enter your new password" />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirm">Confirm password</Label>
-                <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required />
+                <Input id="confirm" name="confirm" type="password" required placeholder="Re-enter your new password" />
               </div>
 
               {error && <p className="text-sm text-red-600" role="alert">{error}</p>}

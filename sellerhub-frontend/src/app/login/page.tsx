@@ -57,7 +57,7 @@ export default function LoginPage() {
             <form className="grid gap-4" onSubmit={handleSubmit}>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" autoComplete="email" required />
+                <Input id="email" name="email" type="email" required placeholder="Enter your email" />
               </div>
 
               <div className="grid gap-2">
@@ -71,8 +71,7 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
-                  required
+                  required placeholder = "Enter your password"
                 />
               </div>
 

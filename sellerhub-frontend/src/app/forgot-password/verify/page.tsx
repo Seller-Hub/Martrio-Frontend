@@ -8,6 +8,7 @@ import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function ForgotPasswordVerifyPage() {
   const router = useRouter();
@@ -25,9 +26,11 @@ export default function ForgotPasswordVerifyPage() {
     const code = String(form.get("code") || "");
     try {
       await new Promise((r) => setTimeout(r, 500));
+      toast.success("Verified", { description: "Your code was accepted.", duration: 1500 }); 
       router.push(`/forgot-password/reset?email=${encodeURIComponent(email)}`);
     } catch {
       setError("Invalid or expired code.");
+      toast.error("Invalid code", { description: "Please try again.", duration: 2000 }); 
     } finally {
       setLoading(false);
     }
@@ -37,6 +40,7 @@ export default function ForgotPasswordVerifyPage() {
     setNotice(null);
     await new Promise((r) => setTimeout(r, 400));
     setNotice("Code sent!");
+    toast.success("Code sent", { description: `We re-sent the code to ${email}.`, duration: 1500 });
   }
 
   return (
@@ -58,7 +62,15 @@ export default function ForgotPasswordVerifyPage() {
             <form className="grid gap-4" onSubmit={onSubmit}>
               <div className="grid gap-2">
                 <Label htmlFor="code">6-digit code</Label>
-                <Input id="code" name="code" inputMode="numeric" pattern="\d{6}" maxLength={6} placeholder="123456" required />
+                <Input
+                  id="code"
+                  name="code"
+                  inputMode="numeric"
+                  pattern="\d{6}"
+                  maxLength={6}
+                  placeholder="123456"
+                  required
+                />
               </div>
 
               {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
